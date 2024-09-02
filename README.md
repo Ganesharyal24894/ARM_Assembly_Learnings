@@ -1,14 +1,16 @@
 # ARM_Assembly_Learnings
 Repository documenting my learning journey of ARM assembly instructions. Includes detailed notes and examples of each instruction as I master them.
 
-## General Instructions :-
+Note :- You can copy paste it into Obsidian for better readability.
 
-### LABEL
+## ==General Instructions :-==
+
+### **LABEL**
 	_label:
 	_mylabel:  ; section of code labeled _mylabel
 Gives a label to a section of code { similar to a function name, 'label' is not a keyword this can be anyname }
 
-### GLOBAL
+### **GLOBAL**
 
 	.global
 	.global _mylabel	; making _mylabel globally visible
@@ -40,11 +42,28 @@ It can also be used to assign immediate memory location/any value into a registe
 
 Here 'my_data' is a label that points to the first data (45) in memory and the address of this data can be stored using given syntax
 
+	ldr r0,=USART1_BASE_ADD+USART_BRR_OFF
+	ldr r0,=0x40020800+0x04
+
+You can also use this type of syntax for adding two values while loading it into a register
+
+### **STR** , **STRB**
+
+	str r0,r1
+Data is stored from R0 to R1.
+
+	str r0,[r1]
+Data is stored from R0 to address stored in R1.
+
+	strb r0,r1
+	strb r0,[r1]
+Same as `str` but stores only lower 8 bits ( 1Byte ) of R0 to R1 OR address stored in R1.
+
 ---
-### ADD, ADDS and ADC
+### ==ADD, ADDS and ADC==
 
 	add r3,r2,r1 ; r3=r2+r1 without updating flags
-
+	
 Adding two values stored in registers and store the result in another register without updating any flag in the CPSR ( Current Program Status Register ). 
 
 
@@ -63,7 +82,7 @@ C (Carry) : set if the addition result generates a carry.(used in unsigned arith
 V (Overflow) : set if the addition results in overflow(used in signed arithmetic)   
 
 ---
-### AND and ANDS
+### ==AND and ANDS==
 
 	AND r0,r1,r2         ; r0 = r1 & r2
 	AND r0,r0,#0xff      ; r0 = r0 & 0xff
@@ -76,7 +95,7 @@ Used for 'Anding' values and can also be used to clear/mask unwanted bits of a r
 Same as **AND** operation but also updates flag inside CPSR register. Generally adding 'S' at the end of instructions will be equivalent to an instruction that performs same operation and updates the flag bits, like ORRS = ORR + flag bit updation
 
 ---
-### MOVN ,ORR, EOR,BIC
+### ==MOVN ,ORR, EOR,BIC==
 
 ##### NOT/MOVN
 	MOVN R0,#0xaa ;0xaa will be negated and then stored into r0 
@@ -103,8 +122,7 @@ User for clearing/resetting bits in the given example first 8 bits of the R1 reg
 In simple words, `bic` takes the bits that are set in the third operand (R0 in our case) and resets/clears those bits positions in the second operand (R1 in our case) and then stores it in the destination register/first operand (R1 in our case).
 
 ---
-### LSL, LSR and ROR
-
+### ==LSL, LSR and ROR==
 
 ##### LSL
 	LSL R0, #3         ; R0 = R0 << 3
@@ -128,7 +146,7 @@ Logical shift right operation, also used for division.
 Rotate right operation.
 
 ---
-## **Types of addressing modes :-**
+## ==Types of addressing modes :-==
 #### 1. Immediate addressing mode:
 Immediate data is provided
 
@@ -149,8 +167,9 @@ Here in this R3 contains some memory location
 '#4' is memory location offset {which means that it will fetch the data from (r3+4) memory location and store it in r0}
 
 ---
-## Post-increment and Pre-increment in Assembly
-##### Post-increment
+## ==Post-increment and Pre-increment in Assembly==
+##### *************Post-increment*************
+
 	ldr r0,[r3],#4
 It means suppose R3 stores memory location 0x4523, so after fetching data from this location R3 will be incremented by four and to access next memory location now you don't have to add offset because R3 will already be (0x4523+4) equals to next memory location.
 
@@ -174,7 +193,7 @@ Example program for Post-increment :
 	.data
 	list:
 		.word 0x3f,0x06,0x5b,0x4f
-##### Pre-increment
+##### *************Pre-increment*************
 
 	ldr r0,[r3,#4]!
 **Pre-increment** : It means the value of R0 will be, data stored in (R3+4) memory location because before fetching data it will first increment the value of R3 by 4 and then fetch data from that memory location. 
@@ -195,7 +214,7 @@ Example program for Pre-increment :
 			.word 0x01,0x79,0x5b
 
 ---
-## Branching Instructions
+## ==Branching Instructions==
 
 1. **B** ( Branch ) Unconditional branch
 
@@ -203,8 +222,15 @@ Example program for Pre-increment :
 	
 		target_label:
 			mov r0,#0x69
-			
-2. **BEQ** ( Branch if equal , Zero Flag = 1 )
+
+2. BL ( Branch with Link ) Branches and stores the next instruction's address into Link Register so that it can return back easily.
+
+		bl label_1                 // branches to 'label_1' with return addr in LR 
+		label_1:
+			mov r0,#3
+			bx LR                 // for going back
+
+3. **BEQ** ( Branch if equal , Zero Flag = 1 )
 
 		.global _start
 		_start:
@@ -219,7 +245,7 @@ Example program for Pre-increment :
 		mov r7,#0x01   ; ends the program
 		swi 0
 
-3. **BNE** (Branch if not equal, Zero flag = 0)
+4. **BNE** (Branch if not equal, Zero flag = 0)
 
 		.global _start
 		_start:
@@ -234,7 +260,7 @@ Example program for Pre-increment :
 		mov r7,#0x01   ; ends the program
 		swi 0
 
-4.  **BGT** (Branch if greater than, Z=0 and N=V)
+5.  **BGT** (Branch if greater than, Z=0 and N=V)
 
 		.global _start
 		_start:
@@ -248,10 +274,58 @@ Example program for Pre-increment :
 		
 		mov r7,#0x01       ; ends the program
 		swi 0
- 5. **BLT** (Branch if less than, N≠V) 
+ 6. **BLT** (Branch if less than, N≠V) 
     Come on you don't need examples anymore, format is more or less same just keep in mind these branching instructions can be used anywhere, it is not necessary to use them after CMP only. You can use it after ADDS, SUBS anything ( that updates flag bits ) these branching instruction just do the work of checking the flags that I have written in the bracket and if the condition is met they simply jump.
-6. **BGE** (Branch if greater than or equal, N=V)
-7. **BLE** (Branch if less than or equal, Z=1 or N≠V)
+7. **BGE** (Branch if greater than or equal, N=V)
+8. **BLE** (Branch if less than or equal, Z=1 or N≠V)
+
+
+
+---
+## ==Rough Section==
+
+	.syntax unified
+
+Tells the assembler to use UAL "Unified Assembler Language" instruction syntax.
+
+---
+
+	.equ RCC_BASE_ADD,0x40023800
+	.set RCC_BASE_ADD,0x40023800
+	RCC_BASE_ADD = 0x40023800
+
+Declares a symbol in symbol table similar to `const` in C
+
+---
+
+	bkpt
+
+Sets a breakpoint through source code which in simple words means that when CPU executes this instruction it will halt the CPU.
+example :
+
+	mov r2, #1
+	lsl r2, r2, #BSRR_RST_BIT
+	
+	bkpt        
+	@CPU will halt here and wait for your command to execute the next instruction
+	
+	str r2,[r0,#BSRR_OFF]
+
+---
+
+	add r3,r3,r2 ; r3=r3+r2 can also be written as add r3,r2
+
+In this example when written like `add r3,r2` first operand is overwritten with the result of operation and this same syntax can be used with other instructions like `mul` , `sub` etc.
+
+---
+
+	MyData .req r7
+	ldr MyData, =123
+	add MyData, 3
+
+Gives an alias name to a register, here MyData is another name for R7
+
+---
 
 
 
