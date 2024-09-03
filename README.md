@@ -3,6 +3,10 @@ Repository documenting my learning journey of ARM assembly instructions. Include
 
 Note :- You can copy paste it into Obsidian for better readability.
 
+Use these Projects get started - 
+1. https://github.com/Ganesharyal24894/ARM_Basic_Assembly
+2. https://github.com/Ganesharyal24894/Scratch_Assembly
+
 ## ==General Instructions :-==
 
 ### **LABEL**
